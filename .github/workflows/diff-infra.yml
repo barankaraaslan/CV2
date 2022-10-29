@@ -1,11 +1,11 @@
 name: CDK deploy
 
 on:
-  push:
-    branches: ["main", "test-ci"]
-
+  pull_request:
+    branches:
+      - main
 env:
-  AWS_REGION: eu-central-1 # set this to your preferred AWS region, e.g. us-west-1
+  AWS_REGION: eu-central-1
 
 permissions:
   contents: read
@@ -29,5 +29,4 @@ jobs:
       - name: CDK deploy
         run: |
           npm ci
-          npx cdk --version
-          npx cdk deploy --require-approval never --ci --asset-parallelism --concurrency 2
+          npx cdk diff --ci
