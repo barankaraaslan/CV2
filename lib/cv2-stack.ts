@@ -7,6 +7,7 @@ import {
 } from "aws-cdk-lib";
 import { Distribution } from "aws-cdk-lib/aws-cloudfront";
 import { S3Origin } from "aws-cdk-lib/aws-cloudfront-origins";
+import { DockerImageAsset } from "aws-cdk-lib/aws-ecr-assets";
 import { BlockPublicAccess, Bucket } from "aws-cdk-lib/aws-s3";
 import { Asset } from "aws-cdk-lib/aws-s3-assets";
 import { BucketDeployment, Source } from "aws-cdk-lib/aws-s3-deployment";
@@ -27,6 +28,10 @@ export class Cv2Stack extends Stack {
     });
 
     const cvFileName = "cv.html";
+
+    new DockerImageAsset(this, "cv-builder-image", {
+      directory: join(__dirname, "../"),
+    });
 
     new BucketDeployment(this, "bucket-deployment", {
       destinationBucket: bucket,
