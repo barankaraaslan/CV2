@@ -19,10 +19,12 @@ export class Cv2Stack extends Stack {
       enforceSSL: true,
     });
 
+    const cvFileName = "cv.html";
+
     new BucketDeployment(this, "deployment", {
       sources: [
         Source.asset(join(__dirname, "../"), {
-          exclude: ["**", "!cv.html"],
+          exclude: ["**", `!${cvFileName}`],
         }),
       ],
       destinationBucket: bucket,
@@ -30,6 +32,7 @@ export class Cv2Stack extends Stack {
 
     this.domainName = new Distribution(this, "distribution", {
       defaultBehavior: { origin: new S3Origin(bucket) },
+      defaultRootObject: cvFileName,
     }).domainName;
 
     new CfnOutput(this, "ServiceAccountIamRole", {
