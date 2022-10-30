@@ -34,6 +34,11 @@ export class Cv2Stack extends Stack {
       exclude: ["**", `!${cvFileName}`],
       bundling: {
         image: DockerImage.fromBuild(join(__dirname, "../")),
+        command: [
+          "bash",
+          "-c",
+          'echo "hello from container" >> /asset-input/cv.html && cp /asset-input/cv.html /asset-output/cv.html`',
+        ],
       },
     });
 
