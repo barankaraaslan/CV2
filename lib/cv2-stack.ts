@@ -31,9 +31,9 @@ export class Cv2Stack extends Stack {
 
     const asset = new Asset(this, "asset", {
       path: join(__dirname, `../`),
-      exclude: ["**", `!${cvFileName}`, "!Dockerfile"],
+      exclude: ["**", `!${cvFileName}`],
       bundling: {
-        image: DockerImage.fromBuild("../"),
+        image: DockerImage.fromBuild(join(__dirname, "../")),
       },
     });
 
