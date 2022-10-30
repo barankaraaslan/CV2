@@ -1,4 +1,4 @@
-import { RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
+import { CfnOutput, RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
 import { Distribution } from "aws-cdk-lib/aws-cloudfront";
 import { S3Origin } from "aws-cdk-lib/aws-cloudfront-origins";
 import { BlockPublicAccess, Bucket } from "aws-cdk-lib/aws-s3";
@@ -31,5 +31,9 @@ export class Cv2Stack extends Stack {
     this.domainName = new Distribution(this, "distribution", {
       defaultBehavior: { origin: new S3Origin(bucket) },
     }).domainName;
+
+    new CfnOutput(this, "ServiceAccountIamRole", {
+      value: this.domainName,
+    });
   }
 }
