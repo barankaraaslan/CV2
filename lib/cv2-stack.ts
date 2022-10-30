@@ -1,6 +1,7 @@
 import { RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
+import { Distribution } from "aws-cdk-lib/aws-cloudfront";
+import { S3Origin } from "aws-cdk-lib/aws-cloudfront-origins";
 import { BlockPublicAccess, Bucket } from "aws-cdk-lib/aws-s3";
-import { Asset } from "aws-cdk-lib/aws-s3-assets";
 import { BucketDeployment, Source } from "aws-cdk-lib/aws-s3-deployment";
 import { Construct } from "constructs";
 import { join } from "path";
@@ -9,7 +10,7 @@ export class Cv2Stack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    const bucket = new Bucket(this, "cv-bucket", {
+    const bucket = new Bucket(this, "bucket", {
       autoDeleteObjects: true,
       removalPolicy: RemovalPolicy.DESTROY,
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
@@ -17,13 +18,17 @@ export class Cv2Stack extends Stack {
       enforceSSL: true,
     });
 
-    new BucketDeployment(this, "cv-deployment", {
+    new BucketDeployment(this, "deployment", {
       sources: [
         Source.asset(join(__dirname, "../"), {
           exclude: ["**", "!cv.html"],
         }),
       ],
       destinationBucket: bucket,
+    });
+
+    new Distribution(this, "distribution", {
+      defaultBehavior: { origin: new S3Origin(bucket) },
     });
   }
 }
