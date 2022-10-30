@@ -37,7 +37,7 @@ export class Cv2Stack extends Stack {
             command: [
               "bash",
               "-c",
-              'echo "heloo from contaiuner" >> /asset-input/cv.html && cp /asset-input/cv.html /asset-output/cv.html',
+              'echo "heloo" >> /asset-input/cv.html && cp /asset-input/cv.html /asset-output/cv.html',
             ],
           },
         }),
