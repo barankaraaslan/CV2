@@ -9,6 +9,7 @@ import { Distribution } from "aws-cdk-lib/aws-cloudfront";
 import { S3Origin } from "aws-cdk-lib/aws-cloudfront-origins";
 import { DockerImageAsset } from "aws-cdk-lib/aws-ecr-assets";
 import { BlockPublicAccess, Bucket } from "aws-cdk-lib/aws-s3";
+import { Asset } from "aws-cdk-lib/aws-s3-assets";
 import { BucketDeployment, Source } from "aws-cdk-lib/aws-s3-deployment";
 import { Construct } from "constructs";
 import { join } from "path";
@@ -30,6 +31,13 @@ export class Cv2Stack extends Stack {
 
     const image = new DockerImageAsset(this, "image", {
       directory: join(__dirname, "../"),
+    });
+
+    const asset = new Asset(this, "asset", {
+      path: join(__dirname, `../${cvFileName}`),
+      bundling: {
+        image: DockerImage.fromRegistry(image.imageUri),
+      },
     });
 
     // new BucketDeployment(this, "deployment", {
