@@ -29,7 +29,7 @@ export class Cv2Stack extends Stack {
 
     const cvFileName = "cv.html";
 
-    const cvBuilderImageAsset = new DockerImageAsset(this, "cv-builder-image", {
+    const image = new DockerImageAsset(this, "cv-builder-image", {
       directory: join(__dirname, "../"),
     });
 
@@ -38,7 +38,7 @@ export class Cv2Stack extends Stack {
       sources: [
         Source.asset(join(__dirname, "../"), {
           bundling: {
-            image: DockerImage.fromRegistry(cvBuilderImageAsset.imageUri),
+            image: DockerImage.fromBuild(join(__dirname, "../")),
             command: [
               "bash",
               "-c",
@@ -57,6 +57,9 @@ export class Cv2Stack extends Stack {
 
     new CfnOutput(this, "domainName", {
       value: this.domainName,
+    });
+    new CfnOutput(this, "imageuri", {
+      value: image.imageUri,
     });
   }
 }
