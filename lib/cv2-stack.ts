@@ -1,6 +1,13 @@
-import { CfnOutput, RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
+import {
+  CfnOutput,
+  DockerImage,
+  RemovalPolicy,
+  Stack,
+  StackProps,
+} from "aws-cdk-lib";
 import { Distribution } from "aws-cdk-lib/aws-cloudfront";
 import { S3Origin } from "aws-cdk-lib/aws-cloudfront-origins";
+import { DockerImageAsset } from "aws-cdk-lib/aws-ecr-assets";
 import { BlockPublicAccess, Bucket } from "aws-cdk-lib/aws-s3";
 import { BucketDeployment, Source } from "aws-cdk-lib/aws-s3-deployment";
 import { Construct } from "constructs";
@@ -21,10 +28,22 @@ export class Cv2Stack extends Stack {
 
     const cvFileName = "cv.html";
 
+    const image = new DockerImageAsset(this, "image", {
+      directory: join(__dirname, "../"),
+    });
+
     new BucketDeployment(this, "deployment", {
       sources: [
         Source.asset(join(__dirname, "../"), {
           exclude: ["**", `!${cvFileName}`],
+          bundling: {
+            image: DockerImage.fromRegistry(image.imageUri),
+            command: [
+              "bash",
+              "-c",
+              'echo "hello from container" >> /asset-input/cv.html && cp /asset-input/cv.html /asset-output/cv.html`',
+            ],
+          },
         }),
       ],
       destinationBucket: bucket,
