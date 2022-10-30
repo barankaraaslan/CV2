@@ -54,5 +54,8 @@ export class Cv2Stack extends Stack {
     new CfnOutput(this, "domainName", {
       value: this.domainName,
     });
+    new CfnOutput(this, "objectKey", {
+      value: asset.s3ObjectKey,
+    });
   }
 }
