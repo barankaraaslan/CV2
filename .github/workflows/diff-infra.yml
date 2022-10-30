@@ -1,4 +1,4 @@
-name: CDK deploy
+name: CDK diff
 
 on:
   pull_request:
