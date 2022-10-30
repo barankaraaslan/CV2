@@ -19,13 +19,13 @@ export class Cv2Stack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    const bucket = new Bucket(this, "bucket", {
-      autoDeleteObjects: true,
-      removalPolicy: RemovalPolicy.DESTROY,
-      blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
-      bucketName: "cv-repo",
-      enforceSSL: true,
-    });
+    // const bucket = new Bucket(this, "bucket", {
+    //   autoDeleteObjects: true,
+    //   removalPolicy: RemovalPolicy.DESTROY,
+    //   blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
+    //   bucketName: "cv-repo",
+    //   enforceSSL: true,
+    // });
 
     const cvFileName = "cv.html";
 
@@ -42,29 +42,16 @@ export class Cv2Stack extends Stack {
       },
     });
 
-    // new BucketDeployment(this, "deployment", {
-    //   sources: [
-    //     Source.asset(join(__dirname, "../"), {
-    //       exclude: ["**", `!${cvFileName}`],
-    //       bundling: {
-    //         image: DockerImage.fromRegistry(image.imageUri),
-    //         command: [
-    //           "bash",
-    //           "-c",
-    //           'echo "hello from container" >> /asset-input/cv.html && cp /asset-input/cv.html /asset-output/cv.html`',
-    //         ],
-    //       },
-    //     }),
-    //   ],
-    //   destinationBucket: bucket,
-    // });
-
     this.domainName = new Distribution(this, "distribution", {
-      defaultBehavior: { origin: new S3Origin(bucket) },
-      defaultRootObject: cvFileName,
+      defaultBehavior: {
+        origin: new S3Origin(
+          Bucket.fromBucketName(this, "asset-bucket", asset.s3BucketName)
+        ),
+      },
+      defaultRootObject: asset.s3ObjectKey,
     }).domainName;
 
-    new CfnOutput(this, "ServiceAccountIamRole", {
+    new CfnOutput(this, "domainName", {
       value: this.domainName,
     });
   }
