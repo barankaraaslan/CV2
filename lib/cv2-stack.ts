@@ -7,6 +7,7 @@ import { Construct } from "constructs";
 import { join } from "path";
 
 export class Cv2Stack extends Stack {
+  readonly domainName: string;
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
@@ -27,8 +28,8 @@ export class Cv2Stack extends Stack {
       destinationBucket: bucket,
     });
 
-    new Distribution(this, "distribution", {
+    this.domainName = new Distribution(this, "distribution", {
       defaultBehavior: { origin: new S3Origin(bucket) },
-    });
+    }).domainName;
   }
 }
