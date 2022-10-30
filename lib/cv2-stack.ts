@@ -28,18 +28,6 @@ export class Cv2Stack extends Stack {
 
     const cvFileName = "cv.html";
 
-    const asset = new Asset(this, "asset", {
-      path: join(__dirname, `../`),
-      exclude: ["**", `!${cvFileName}`],
-      bundling: {
-        image: DockerImage.fromBuild(join(__dirname, "../")),
-        command: [
-          "bash",
-          "-c",
-          'echo "heloo from contaiuner" >> /asset-input/cv.html && cp /asset-input/cv.html /asset-output/cv.html',
-        ],
-      },
-    });
     new BucketDeployment(this, "bucket-deployment", {
       destinationBucket: bucket,
       sources: [
@@ -64,9 +52,6 @@ export class Cv2Stack extends Stack {
 
     new CfnOutput(this, "domainName", {
       value: this.domainName,
-    });
-    new CfnOutput(this, "objectKey", {
-      value: asset.s3ObjectKey,
     });
   }
 }
