@@ -32,22 +32,22 @@ export class Cv2Stack extends Stack {
       directory: join(__dirname, "../"),
     });
 
-    new BucketDeployment(this, "deployment", {
-      sources: [
-        Source.asset(join(__dirname, "../"), {
-          exclude: ["**", `!${cvFileName}`],
-          bundling: {
-            image: DockerImage.fromRegistry(image.imageUri),
-            command: [
-              "bash",
-              "-c",
-              'echo "hello from container" >> /asset-input/cv.html && cp /asset-input/cv.html /asset-output/cv.html`',
-            ],
-          },
-        }),
-      ],
-      destinationBucket: bucket,
-    });
+    // new BucketDeployment(this, "deployment", {
+    //   sources: [
+    //     Source.asset(join(__dirname, "../"), {
+    //       exclude: ["**", `!${cvFileName}`],
+    //       bundling: {
+    //         image: DockerImage.fromRegistry(image.imageUri),
+    //         command: [
+    //           "bash",
+    //           "-c",
+    //           'echo "hello from container" >> /asset-input/cv.html && cp /asset-input/cv.html /asset-output/cv.html`',
+    //         ],
+    //       },
+    //     }),
+    //   ],
+    //   destinationBucket: bucket,
+    // });
 
     this.domainName = new Distribution(this, "distribution", {
       defaultBehavior: { origin: new S3Origin(bucket) },
