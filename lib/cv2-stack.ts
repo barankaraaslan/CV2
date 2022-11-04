@@ -38,7 +38,7 @@ export class Cv2Stack extends Stack {
       sources: [
         Source.asset(join(__dirname, "../"), {
           bundling: {
-            image: DockerImage.fromRegistry("archlinux"),
+            image: DockerImage.fromRegistry(image.imageUri),
             command: [
               "bash",
               "-c",
