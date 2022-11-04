@@ -9,7 +9,6 @@ import { Distribution } from "aws-cdk-lib/aws-cloudfront";
 import { S3Origin } from "aws-cdk-lib/aws-cloudfront-origins";
 import { DockerImageAsset } from "aws-cdk-lib/aws-ecr-assets";
 import { BlockPublicAccess, Bucket } from "aws-cdk-lib/aws-s3";
-import { Asset } from "aws-cdk-lib/aws-s3-assets";
 import { BucketDeployment, Source } from "aws-cdk-lib/aws-s3-deployment";
 import { Construct } from "constructs";
 import { join } from "path";
@@ -38,7 +37,9 @@ export class Cv2Stack extends Stack {
       sources: [
         Source.asset(join(__dirname, "../"), {
           bundling: {
-            image: DockerImage.fromRegistry(image.imageUri),
+            image: DockerImage.fromRegistry(
+              "872456077798.dkr.ecr.eu-central-1.amazonaws.com/cdk-hnb659fds-container-assets-872456077798-eu-central-1:b3a127d0ecdcac467dcf900a9ada0a3843728f7d04ee0365d7584494918f9508"
+            ),
             command: [
               "bash",
               "-c",
