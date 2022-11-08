@@ -32,7 +32,21 @@ export class Cv2Stack extends Stack {
       directory: join(__dirname, "../"),
       target: "linux/amd64",
     });
-    console.log(image.imageUri);
+
+    this.domainName = new Distribution(this, "distribution", {
+      defaultBehavior: {
+        origin: new S3Origin(bucket),
+      },
+      defaultRootObject: cvFileName,
+    }).domainName;
+
+    new CfnOutput(this, "domainName", {
+      value: this.domainName,
+    });
+    new CfnOutput(this, "imageuri", {
+      value: image.imageUri,
+    });
+
     new BucketDeployment(this, "bucket-deployment", {
       destinationBucket: bucket,
       sources: [
@@ -47,19 +61,6 @@ export class Cv2Stack extends Stack {
           },
         }),
       ],
-    });
-    this.domainName = new Distribution(this, "distribution", {
-      defaultBehavior: {
-        origin: new S3Origin(bucket),
-      },
-      defaultRootObject: cvFileName,
-    }).domainName;
-
-    new CfnOutput(this, "domainName", {
-      value: this.domainName,
-    });
-    new CfnOutput(this, "imageuri", {
-      value: image.imageUri,
     });
   }
 }
