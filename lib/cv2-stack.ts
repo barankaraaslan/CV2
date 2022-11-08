@@ -13,9 +13,23 @@ import { BucketDeployment, Source } from "aws-cdk-lib/aws-s3-deployment";
 import { Construct } from "constructs";
 import { join } from "path";
 
-export class Cv2Stack extends Stack {
-  readonly domainName: string;
+export class BuilderImageStack extends Stack {
+  readonly imageAsset: DockerImageAsset;
   constructor(scope: Construct, id: string, props?: StackProps) {
+    super(scope, id, props);
+
+    this.imageAsset = new DockerImageAsset(this, "cv-builder-image", {
+      directory: join(__dirname, "../"),
+    });
+  }
+}
+
+export interface Cv2StackProps extends StackProps {
+  imageAsset: DockerImageAsset;
+}
+
+export class Cv2Stack extends Stack {
+  constructor(scope: Construct, id: string, props: Cv2StackProps) {
     super(scope, id, props);
 
     const bucket = new Bucket(this, "bucket", {
@@ -28,12 +42,7 @@ export class Cv2Stack extends Stack {
 
     const cvFileName = "cv.html";
 
-    const image = new DockerImageAsset(this, "cv-builder-image", {
-      directory: join(__dirname, "../"),
-      target: "linux/amd64",
-    });
-
-    this.domainName = new Distribution(this, "distribution", {
+    const domainName = new Distribution(this, "distribution", {
       defaultBehavior: {
         origin: new S3Origin(bucket),
       },
@@ -41,26 +50,22 @@ export class Cv2Stack extends Stack {
     }).domainName;
 
     new CfnOutput(this, "domainName", {
-      value: this.domainName,
+      value: domainName,
     });
-    new CfnOutput(this, "imageuri", {
-      value: image.imageUri,
+    new BucketDeployment(this, "bucket-deployment", {
+      destinationBucket: bucket,
+      sources: [
+        Source.asset(join(__dirname, "../"), {
+          bundling: {
+            image: DockerImage.fromRegistry(props.imageAsset.imageUri),
+            command: [
+              "bash",
+              "-c",
+              'echo "heloo" >> /asset-input/cv.html && cp /asset-input/cv.html /asset-output/cv.html',
+            ],
+          },
+        }),
+      ],
     });
-
-    // new BucketDeployment(this, "bucket-deployment", {
-    //   destinationBucket: bucket,
-    //   sources: [
-    //     Source.asset(join(__dirname, "../"), {
-    //       bundling: {
-    //         image: DockerImage.fromRegistry(image.imageUri),
-    //         command: [
-    //           "bash",
-    //           "-c",
-    //           'echo "heloo" >> /asset-input/cv.html && cp /asset-input/cv.html /asset-output/cv.html',
-    //         ],
-    //       },
-    //     }),
-    //   ],
-    // });
   }
 }
