@@ -18,7 +18,7 @@ export class BuilderImageStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    this.imageAsset = new DockerImageAsset(this, "cv-builder-image", {
+    this.imageAsset = new DockerImageAsset(this, "cv-builder-2", {
       directory: join(__dirname, "../"),
     });
   }
