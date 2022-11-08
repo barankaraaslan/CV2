@@ -47,20 +47,20 @@ export class Cv2Stack extends Stack {
       value: image.imageUri,
     });
 
-    new BucketDeployment(this, "bucket-deployment", {
-      destinationBucket: bucket,
-      sources: [
-        Source.asset(join(__dirname, "../"), {
-          bundling: {
-            image: DockerImage.fromRegistry(image.imageUri),
-            command: [
-              "bash",
-              "-c",
-              'echo "heloo" >> /asset-input/cv.html && cp /asset-input/cv.html /asset-output/cv.html',
-            ],
-          },
-        }),
-      ],
-    });
+    // new BucketDeployment(this, "bucket-deployment", {
+    //   destinationBucket: bucket,
+    //   sources: [
+    //     Source.asset(join(__dirname, "../"), {
+    //       bundling: {
+    //         image: DockerImage.fromRegistry(image.imageUri),
+    //         command: [
+    //           "bash",
+    //           "-c",
+    //           'echo "heloo" >> /asset-input/cv.html && cp /asset-input/cv.html /asset-output/cv.html',
+    //         ],
+    //       },
+    //     }),
+    //   ],
+    // });
   }
 }
