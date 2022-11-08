@@ -32,7 +32,7 @@ export class Cv2Stack extends Stack {
       directory: join(__dirname, "../"),
       target: "linux/amd64",
     });
-
+    console.log(image.imageUri);
     new BucketDeployment(this, "bucket-deployment", {
       destinationBucket: bucket,
       sources: [
