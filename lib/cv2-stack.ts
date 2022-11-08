@@ -30,6 +30,7 @@ export class Cv2Stack extends Stack {
 
     const image = new DockerImageAsset(this, "cv-builder-image", {
       directory: join(__dirname, "../"),
+      target: "linux/amd64",
     });
 
     new BucketDeployment(this, "bucket-deployment", {
@@ -37,9 +38,7 @@ export class Cv2Stack extends Stack {
       sources: [
         Source.asset(join(__dirname, "../"), {
           bundling: {
-            image: DockerImage.fromRegistry(
-              "872456077798.dkr.ecr.eu-central-1.amazonaws.com/cdk-hnb659fds-container-assets-872456077798-eu-central-1:b3a127d0ecdcac467dcf900a9ada0a3843728f7d04ee0365d7584494918f9508"
-            ),
+            image: DockerImage.fromRegistry(image.imageUri),
             command: [
               "bash",
               "-c",
