@@ -52,12 +52,13 @@ export class Cv2Stack extends Stack {
     new CfnOutput(this, "domainName", {
       value: domainName,
     });
+    const bundlerImage = DockerImage.fromRegistry(props.imageAsset.imageUri);
     new BucketDeployment(this, "bucket-deployment", {
       destinationBucket: bucket,
       sources: [
         Source.asset(join(__dirname, "../"), {
           bundling: {
-            image: DockerImage.fromRegistry(props.imageAsset.imageUri),
+            image: bundlerImage,
             command: [
               "bash",
               "-c",

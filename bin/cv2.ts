@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 import * as cdk from "aws-cdk-lib";
-import "source-map-support/register";
 import { BuilderImageStack, Cv2Stack } from "../lib/cv2-stack";
 
 const app = new cdk.App();
