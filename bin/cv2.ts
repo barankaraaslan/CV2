@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 import * as cdk from "aws-cdk-lib";
-import { BuilderImageStack, Cv2Stack } from "../lib/cv2-stack";
+import { Cv2BuildEnv, Cv2Stack } from "../lib/cv2-stack";
 
 const app = new cdk.App();
-const imageAssetStack = new BuilderImageStack(app, "imagestack");
+const buildEnvImageStack = new Cv2BuildEnv(app, "buildenv");
 const mainStack = new Cv2Stack(app, "Cv2Stack", {
-  imageAsset: imageAssetStack.imageAsset,
+  buildImage: buildEnvImageStack.image,
   /* If you don't specify 'env', this stack will be environment-agnostic.
    * Account/Region-dependent features and context lookups will not work,
    * but a single synthesized template can be deployed anywhere. */
@@ -17,4 +17,3 @@ const mainStack = new Cv2Stack(app, "Cv2Stack", {
   // env: { account: '123456789012', region: 'us-east-1' },
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
 });
-mainStack.addDependency(imageAssetStack);

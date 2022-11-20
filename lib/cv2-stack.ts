@@ -13,21 +13,9 @@ import { BucketDeployment, Source } from "aws-cdk-lib/aws-s3-deployment";
 import { Construct } from "constructs";
 import { join } from "path";
 
-export class BuilderImageStack extends Stack {
-  readonly imageAsset: DockerImageAsset;
-  constructor(scope: Construct, id: string, props?: StackProps) {
-    super(scope, id, props);
-
-    this.imageAsset = new DockerImageAsset(this, "cv-builder-2", {
-      directory: join(__dirname, "../"),
-    });
-  }
-}
-
 export interface Cv2StackProps extends StackProps {
-  imageAsset: DockerImageAsset;
+  buildImage: DockerImage;
 }
-
 export class Cv2Stack extends Stack {
   constructor(scope: Construct, id: string, props: Cv2StackProps) {
     super(scope, id, props);
@@ -52,13 +40,12 @@ export class Cv2Stack extends Stack {
     new CfnOutput(this, "domainName", {
       value: domainName,
     });
-    const bundlerImage = DockerImage.fromRegistry(props.imageAsset.imageUri);
     new BucketDeployment(this, "bucket-deployment", {
       destinationBucket: bucket,
       sources: [
         Source.asset(join(__dirname, "../"), {
           bundling: {
-            image: bundlerImage,
+            image: props.buildImage,
             command: [
               "bash",
               "-c",
@@ -68,5 +55,16 @@ export class Cv2Stack extends Stack {
         }),
       ],
     });
+  }
+}
+
+export class Cv2BuildEnv extends Stack {
+  readonly image: DockerImage;
+  constructor(scope: Construct, id: string, props?: StackProps) {
+    super(scope, id, props);
+    const imageAsset = new DockerImageAsset(this, "cv-builder-2", {
+      directory: join(__dirname, "../"),
+    });
+    this.image = DockerImage.fromRegistry(imageAsset.imageUri);
   }
 }
